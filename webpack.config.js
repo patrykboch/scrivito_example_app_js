@@ -14,7 +14,7 @@ const AddSitemapToRedirectsWebpackPlugin = require('./add-sitemap-to-redirects-w
 // load ".env"
 dotenv.config();
 
-const buildPath = 'build';
+const buildPath = 'marketplace_builder/assets';
 
 module.exports = (env = {}) => {
   // see https://github.com/webpack/webpack/issues/2537 for details
