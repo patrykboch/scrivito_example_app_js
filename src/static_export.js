@@ -24,7 +24,7 @@ function exportObj(obj) {
     Scrivito.withPage(obj, () => {
       return {
         objId: obj.id(),
-        url: Scrivito.urlFor(obj),
+        objUrl: Scrivito.urlFor(obj),
         bodyContent: ReactDOMServer.renderToString(<App />),
       };
     })
