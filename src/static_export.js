@@ -30,16 +30,26 @@ function exportObj(obj) {
 }
 
 function exportObjs() {
+  console.time('[exportObjs]');
+  console.time(`[exportObjs] Load all objs`);
   return Scrivito.load(allObjs).then(objs => {
+    console.timeEnd(`[exportObjs] Load all objs`);
     const results = {};
 
-    const promises = objs.map(obj =>
-      exportObj(obj).then(([url, content]) => {
+    console.time(`[exportObjs] Export ${ objs.length } objs`);
+    const promises = objs.map(obj => {
+      console.time(`[exportObjs] Export obj ${ obj.id() }`);
+      return exportObj(obj).then(([url, content]) => {
+        console.timeEnd(`[exportObjs] Export obj ${ obj.id() }`);
         results[url] = content;
       })
-    );
+    });
 
-    return Promise.all(promises).then(() => results);
+    return Promise.all(promises).then(() => {
+      console.timeEnd(`[exportObjs] Export ${ objs.length } objs`);
+      console.timeEnd('[exportObjs]');
+      return results;
+    });
   })
 }
 
