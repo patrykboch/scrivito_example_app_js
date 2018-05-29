@@ -22,9 +22,11 @@ function allObjs() {
 function exportObj(obj) {
   return Scrivito.load(() =>
     Scrivito.withPage(obj, () => {
-      const url = Scrivito.urlFor(obj);
-      const content = ReactDOMServer.renderToString(<App />);
-      return [url, content];
+      return {
+        objId: obj.id(),
+        url: Scrivito.urlFor(obj),
+        bodyContent: ReactDOMServer.renderToString(<App />),
+      };
     })
   );
 }
@@ -34,18 +36,17 @@ function exportObjs() {
   console.time(`[exportObjs] Load all objs`);
   return Scrivito.load(allObjs).then(objs => {
     console.timeEnd(`[exportObjs] Load all objs`);
-    const results = {};
 
     console.time(`[exportObjs] Export ${ objs.length } objs`);
     const promises = objs.map(obj => {
       console.time(`[exportObjs] Export obj ${ obj.id() }`);
-      return exportObj(obj).then(([url, content]) => {
+      return exportObj(obj).then(result => {
         console.timeEnd(`[exportObjs] Export obj ${ obj.id() }`);
-        results[url] = content;
+        return result;
       })
     });
 
-    return Promise.all(promises).then(() => {
+    return Promise.all(promises).then(results => {
       console.timeEnd(`[exportObjs] Export ${ objs.length } objs`);
       console.timeEnd('[exportObjs]');
       return results;
