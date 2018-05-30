@@ -51,7 +51,13 @@ async function exportObjs() {
 
   console.log('  [exportObjs] 🖥️️  Visiting http://localhost:8080/_export_objs.html ...');
   const page = await browser.newPage();
-  await page.goto('http://localhost:8080/_export_objs.html');
+  try {
+    await page.goto('http://localhost:8080/_export_objs.html');
+  } catch (e) {
+    console.log('  [exportObjs] 🖥️️  ❌  Could not visit http://localhost:8080/_export_objs.html!' +
+      ' Is a webserver running on 8080?');
+    throw e;
+  }
 
   console.log('  [exportObjs] 🖥️️  Generating results...');
   const results = await page.evaluate(() => exportObjs());
@@ -135,4 +141,7 @@ ${ body }
 </html>`;
 }
 
-staticExport();
+staticExport().catch(e => {
+  console.log('❌ An error occurred!', e);
+  process.exit(1);
+});
