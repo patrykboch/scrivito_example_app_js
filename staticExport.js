@@ -26,42 +26,49 @@ async function staticExport() {
   await fse.remove(TARGET_DIR);
   await fse.ensureDir(TARGET_DIR);
 
+  let filesExported = 0;
   console.log('[staticExport] Copying over assets...');
-  copyAssets();
+  filesExported += copyAssets();
 
-  console.log('[staticExport] Writing html to disk...');
-  writeObjsToDisk(exportedObjs);
+  console.log(`[staticExport] Writing ${ exportedObjs.length } html files to disk...`);
+  filesExported += writeObjsToDisk(exportedObjs);
 
-  console.log(`[staticExport] 🚀 All files are now available in folder ${ TARGET_DIR }!`);
+  console.log(
+    `[staticExport] 📦 All ${ filesExported } files are now available in folder ${ TARGET_DIR }!`);
 
   console.timeEnd('[staticExport]');
 }
 
 async function exportObjs() {
-  console.log('  [exportObjs] Starting browser...');
+  console.log('  [exportObjs] 🖥️️  Starting browser...');
   const browser = await puppeteer.launch();
 
-  console.log('  [exportObjs] Visiting http://localhost:8080/_static_export.html ...');
+  console.log('  [exportObjs] 🖥️️  Visiting http://localhost:8080/_static_export.html ...');
   const page = await browser.newPage();
   await page.goto('http://localhost:8080/_static_export.html');
 
-  console.log('  [exportObjs] Generating results...');
+  console.log('  [exportObjs] 🖥️️  Generating results...');
   const results = await page.evaluate(() => exportObjs());
-  console.log(`  [exportObjs] Generated ${ results.length } results.`);
+  console.log(`  [exportObjs] 🖥️️  Generated ${ results.length } results.`);
 
-  console.log('  [exportObjs] Closing the browser...');
+  console.log('  [exportObjs] 🖥️️  Closing the browser...');
   await browser.close();
 
   return results;
 }
 
 function copyAssets() {
+  let filesCopied = 0;
+
   const filesInBuildFolder = fs.readdirSync('build/');
   filesInBuildFolder.forEach(fileName => {
     if (ASSET_FILE_EXTENTIONS.some(extension => fileName.endsWith(`.${ extension }`))) {
       fse.copySync(`build/${ fileName }`, `${ TARGET_DIR }/${ fileName }`);
+      filesCopied += 1;
     }
   });
+
+  return filesCopied;
 }
 
 function writeObjsToDisk(results) {
@@ -72,6 +79,8 @@ function writeObjsToDisk(results) {
     const htmlContent = generateHtml(bodyContent);
     fse.outputFileSync(`${ TARGET_DIR }/${ fileName }`, htmlContent);
   });
+
+  return results.length;
 }
 
 function filenameFromUrl(url) {
