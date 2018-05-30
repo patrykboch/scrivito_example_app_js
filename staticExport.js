@@ -13,8 +13,6 @@ async function staticExport() {
 
   const exportedObjs = await exportObjs();
 
-  await fse.move(`${ TARGET_DIR }/index.html`, `${ TARGET_DIR }/fallback_index.html`);
-
   console.log(`[staticExport] Writing ${ exportedObjs.length } html files to disk...`);
   writeObjsToDisk(exportedObjs);
 
