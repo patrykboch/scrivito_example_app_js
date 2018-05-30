@@ -94,10 +94,10 @@ function copyAssets() {
 
 function writeObjsToDisk(results) {
   results.forEach(result => {
-    const { objId, objUrl, bodyContent } = result;
+    const { objId, objUrl, bodyContent, headContent } = result;
     const fileName = filenameFromUrl(objUrl);
     console.log(`  [writeObjsToDisk] Writing ${ fileName } (${ objId }) to disk...`);
-    const htmlContent = generateHtml(bodyContent);
+    const htmlContent = generateHtml(bodyContent, headContent);
     fse.outputFileSync(`${ TARGET_DIR }/${ fileName }`, htmlContent);
   });
 
@@ -114,7 +114,8 @@ function filenameFromUrl(url) {
   return `${ pathname }.html`;
 }
 
-function generateHtml(bodyContent) {
+function generateHtml(bodyContent, headContent) {
+  console.log('headContent', headContent);
   // TODO: Remove workaround for host containing urls from scrivito.
   const body = bodyContent.replace(/http:\/\/localhost\:8080/g, '');
 

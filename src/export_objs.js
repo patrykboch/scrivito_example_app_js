@@ -2,6 +2,7 @@
 import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import * as Scrivito from 'scrivito';
+import Helmet from 'react-helmet';
 import './Objs';
 import './Widgets';
 import App from './App';
@@ -22,10 +23,13 @@ function allObjs() {
 function exportObj(obj) {
   return Scrivito.load(() =>
     Scrivito.withPage(obj, () => {
+      const bodyContent = ReactDOMServer.renderToString(<App />);
+      const headContent = Helmet.renderStatic();
       return {
         objId: obj.id(),
         objUrl: Scrivito.urlFor(obj),
-        bodyContent: ReactDOMServer.renderToString(<App />),
+        bodyContent,
+        headContent,
       };
     })
   );
