@@ -25,7 +25,7 @@ function exportObj(obj) {
       return {
         objId: obj.id(),
         objUrl: Scrivito.urlFor(obj),
-        bodyContent: ReactDOMServer.renderToString(<App />),
+        bodyContent: ReactDOMServer.renderToStaticMarkup(<App />),
       };
     })
   );

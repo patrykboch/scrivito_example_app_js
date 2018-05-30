@@ -136,7 +136,10 @@ function generateHtml(bodyContent) {
   <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-${ body }
+  <div id="application" data-scrivito-prerendered="true">
+    ${ body }
+  </div>
+  <script async src="/index.js"></script>
 </body>
 </html>`;
 }
