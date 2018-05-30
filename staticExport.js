@@ -115,6 +115,9 @@ function filenameFromUrl(url) {
 }
 
 function generateHtml(bodyContent) {
+  // TODO: Remove workaround for host containing urls from scrivito.
+  const body = bodyContent.replace(/http:\/\/localhost\:8080/g, '');
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -127,7 +130,7 @@ function generateHtml(bodyContent) {
   <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-${ bodyContent }
+${ body }
 </body>
 </html>`;
 }
