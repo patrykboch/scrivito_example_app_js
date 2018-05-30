@@ -64,6 +64,7 @@
   },
   "scripts": {
     "build": "webpack -p",
+    "build:static": "npm run build && node staticExport.js",
     "start": "webpack-dev-server --open",
     "eslint": "eslint --max-warnings 1 src/"
   }
