@@ -5,18 +5,7 @@ const nodeUrl = require('url');
 const path = require('path');
 const puppeteer = require('puppeteer');
 
-const TARGET_DIR = 'build_static';
-
-const ASSET_FILE_EXTENTIONS = [
-  'css',
-  'eot',
-  'gif',
-  'png',
-  'svg',
-  'ttf',
-  'woff',
-  'woff2',
-];
+const TARGET_DIR = 'build';
 
 async function staticExport() {
   console.time('[staticExport]');
@@ -24,19 +13,17 @@ async function staticExport() {
 
   const exportedObjs = await exportObjs();
 
-  console.log(`[staticExport] Cleaning folder ${ TARGET_DIR }/ ...`);
-  await fse.remove(TARGET_DIR);
-  await fse.ensureDir(TARGET_DIR);
-
-  let filesExported = 0;
-  console.log('[staticExport] Copying over assets...');
-  filesExported += copyAssets();
+  await fse.move(`${ TARGET_DIR }/index.html`, `${ TARGET_DIR }/fallback_index.html`);
 
   console.log(`[staticExport] Writing ${ exportedObjs.length } html files to disk...`);
-  filesExported += writeObjsToDisk(exportedObjs);
+  writeObjsToDisk(exportedObjs);
+
+  console.log('[staticExport] Cleaning up files _export_objs.html and export_objs.js ...');
+  await fse.remove(`${TARGET_DIR}/_export_objs.html`);
+  await fse.remove(`${TARGET_DIR}/export_objs.js`);
 
   console.log(
-    `[staticExport] 📦 All ${ filesExported } files are now available in folder ${ TARGET_DIR }!`);
+    `[staticExport] 📦 Enriched folder ${ TARGET_DIR } with ${ exportedObjs.length } files!`);
 
   console.timeEnd('[staticExport]');
 }
@@ -84,20 +71,6 @@ function startServer() {
   });
 }
 
-function copyAssets() {
-  let filesCopied = 0;
-
-  const filesInBuildFolder = fs.readdirSync('build/');
-  filesInBuildFolder.forEach(fileName => {
-    if (ASSET_FILE_EXTENTIONS.some(extension => fileName.endsWith(`.${ extension }`))) {
-      fse.copySync(`build/${ fileName }`, `${ TARGET_DIR }/${ fileName }`);
-      filesCopied += 1;
-    }
-  });
-
-  return filesCopied;
-}
-
 function writeObjsToDisk(results) {
   results.forEach(result => {
     const { objId, objUrl, bodyContent } = result;
@@ -106,8 +79,6 @@ function writeObjsToDisk(results) {
     const htmlContent = generateHtml(bodyContent);
     fse.outputFileSync(`${ TARGET_DIR }/${ fileName }`, htmlContent);
   });
-
-  return results.length;
 }
 
 function filenameFromUrl(url) {
