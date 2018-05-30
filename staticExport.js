@@ -49,9 +49,9 @@ async function exportObjs() {
   console.log('  [exportObjs] 🖥️️  Starting browser...');
   const browser = await puppeteer.launch();
 
-  console.log('  [exportObjs] 🖥️️  Visiting http://localhost:8080/_static_export.html ...');
+  console.log('  [exportObjs] 🖥️️  Visiting http://localhost:8080/_export_objs.html ...');
   const page = await browser.newPage();
-  await page.goto('http://localhost:8080/_static_export.html');
+  await page.goto('http://localhost:8080/_export_objs.html');
 
   console.log('  [exportObjs] 🖥️️  Generating results...');
   const results = await page.evaluate(() => exportObjs());
