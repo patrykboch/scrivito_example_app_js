@@ -3,5 +3,5 @@
 # “command” is your build command.
 
 [build]
-  publish = "build"
-  command = "npm run build"
+  publish = "build_static"
+  command = "npm run build:static"
