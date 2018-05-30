@@ -147,7 +147,7 @@ module.exports = (env = {}) => {
         rewrites: [
           { from: /^\/scrivito$/, to: '/scrivito/index.html' },
           { from: /^\/scrivito\//, to: '/scrivito/index.html' },
-          { from: /./, to: '/index.html' },
+          { from: /./, to: '/fallback_index.html' },
         ],
       },
       headers: {
