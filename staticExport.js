@@ -1,7 +1,9 @@
-const puppeteer = require('puppeteer');
-const nodeUrl = require('url');
+const express = require('express');
 const fs = require('fs');
 const fse = require('fs-extra');
+const nodeUrl = require('url');
+const path = require('path');
+const puppeteer = require('puppeteer');
 
 const TARGET_DIR = 'build_static';
 
@@ -40,6 +42,10 @@ async function staticExport() {
 }
 
 async function exportObjs() {
+  console.log('  [exportObjs] 🗄️  Starting express server...');
+  const server = await startServer();
+  console.log('  [exportObjs] 🗄️  Express server started...');
+
   console.log('  [exportObjs] 🖥️️  Starting browser...');
   const browser = await puppeteer.launch();
 
@@ -54,7 +60,22 @@ async function exportObjs() {
   console.log('  [exportObjs] 🖥️️  Closing the browser...');
   await browser.close();
 
+  console.log('  [exportObjs] 🗄️  Closing express server...');
+  await server.close();
+
   return results;
+}
+
+function startServer() {
+  const buildPath = path.join(__dirname, 'build');
+  const app = express();
+  const staticMiddleware = express.static(buildPath);
+  app.use(staticMiddleware);
+
+  let server;
+  return new Promise((resolve, reject) => {
+    server = app.listen(8080, () => resolve(server));
+  });
 }
 
 function copyAssets() {
