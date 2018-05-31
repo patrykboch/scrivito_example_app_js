@@ -12,7 +12,6 @@ const blacklistObjClasses = [
   'Download',
   'Image',
   'Redirect',
-  'SearchResults',
   'Video',
 ];
 
