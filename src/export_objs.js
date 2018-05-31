@@ -41,7 +41,14 @@ function exportObj(obj) {
         bodyContent,
       };
     })
-  );
+  ).catch(e => {
+    const objId = obj.id();
+    console.log(`❌  Error while processing obj ${objId}`, e);
+    return {
+      objId,
+      errorDuringGeneration: true,
+    };
+  });
 }
 
 function exportObjs() {
@@ -50,7 +57,6 @@ function exportObjs() {
   return Scrivito.load(allObjs).then(objs => {
     console.timeEnd('Loading all objs');
 
-    console.time(`Exporting ${objs.length} objs`);
     const promises = objs.map(obj => {
       console.time(`Exporting obj ${obj.id()}`);
       return exportObj(obj).then(result => {
@@ -60,9 +66,12 @@ function exportObjs() {
     });
 
     return Promise.all(promises).then(results => {
-      console.timeEnd(`Exporting ${objs.length} objs`);
+      const filteredResults = results.filter(result => !result.errorDuringGeneration);
+      const exportedCount = filteredResults.length;
+      const failedCount = results.length - exportedCount;
+      console.log(`Exporting ${exportedCount} objs (skipped ${failedCount} due to failures)`);
       console.timeEnd('[exportObjs]');
-      return results;
+      return filteredResults;
     });
   });
 }
