@@ -13,6 +13,9 @@ async function staticExport() {
   console.time('[staticExport]');
   console.log('[staticExport] Starting...');
 
+  let filesAdded = 0;
+  let filesRemoved = 0;
+
   console.log('[staticExport] 🗄️  Starting express server...');
   server = await startServer();
   console.log('[staticExport] 🗄️  Express server started...');
@@ -29,10 +32,16 @@ async function staticExport() {
 
   console.log(`[staticExport] Writing ${ exportedObjs.length } html files to disk...`);
   writeObjsToDisk(exportedObjs);
+  filesAdded += exportedObjs.length;
 
-  console.log('[staticExport] Cleaning up files _export_objs.html and export_objs.js ...');
-  await fse.remove(`${TARGET_DIR}/_export_objs.html`);
-  await fse.remove(`${TARGET_DIR}/export_objs.js`);
+  [
+    '_export_objs.html',
+    'export_objs.js',
+  ].forEach(filename => {
+    console.log(`[staticExport] ✨ Removing now obsolete file ${ filename }...`);
+    fse.removeSync(`${TARGET_DIR}/${ filename }`);
+    filesRemoved += 1;
+  });
 
   console.log('[staticExport] 🖥️️  Closing the browser...');
   await browser.close();
@@ -40,8 +49,8 @@ async function staticExport() {
   console.log('[staticExport] 🗄️  Closing express server...');
   await server.close();
 
-  console.log(
-    `[staticExport] 📦 Enriched folder ${ TARGET_DIR } with ${ exportedObjs.length } files!`);
+  console.log(`[staticExport] 📦 Added ${ filesAdded } files to and remove ${ filesRemoved }`+
+    ` files from folder ${ TARGET_DIR }!`);
 
   console.timeEnd('[staticExport]');
 }
