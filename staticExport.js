@@ -72,10 +72,10 @@ function startServer() {
 
 function writeObjsToDisk(results) {
   results.forEach(result => {
-    const { objId, objUrl, bodyContent } = result;
+    const { objId, objUrl } = result;
     const fileName = filenameFromUrl(objUrl);
     console.log(`  [writeObjsToDisk] Writing ${ fileName } (${ objId }) to disk...`);
-    const htmlContent = generateHtml({ objId, bodyContent });
+    const htmlContent = generateHtml(result);
     fse.outputFileSync(`${ TARGET_DIR }/${ fileName }`, htmlContent);
   });
 }
@@ -90,30 +90,29 @@ function filenameFromUrl(url) {
   return `${ pathname }.html`;
 }
 
-function generateHtml({ objId, bodyContent }) {
-  // TODO: Remove workaround for host containing urls from scrivito.
-  const body = bodyContent.replace(/http:\/\/localhost\:8080/g, '');
-
-  return `<!DOCTYPE html>
-<html lang="en">
+function generateHtml({ objId, htmlAttributes, headContent, bodyAttributes, bodyContent }) {
+  const html = `<!DOCTYPE html>
+<html ${ htmlAttributes }>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="generator" content="Scrivito by Infopark AG (scrivito.com)">
-
-  <title>Welcome to the Scrivito Example App!</title>
+  ${ headContent }
   <link rel="preconnect" href="https://api.scrivito.com" crossorigin>
   <link rel="preconnect" href="https://api.scrivito.com">
   <link rel="stylesheet" href="/index.css">
 </head>
-<body>
+<body ${ bodyAttributes }>
   <div id="application" data-scrivito-prerendering-obj-id="${objId}">
-    ${ body }
+    ${ bodyContent }
   </div>
   <script async src="/index.js"></script>
 </body>
 </html>`;
+
+  // TODO: Remove workaround for host containing urls from scrivito.
+  return html.replace(/http:\/\/localhost\:8080/g, '');
 }
 
 staticExport().catch(e => {
