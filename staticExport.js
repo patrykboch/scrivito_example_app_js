@@ -34,9 +34,20 @@ async function staticExport() {
   writeObjsToDisk(exportedObjs);
   filesAdded += exportedObjs.length;
 
+  console.log('[staticExport] Creating sitemap.xml...');
+  const sitemap = await executeInBrowser(
+    'http://localhost:8080/_export_sitemap.html',
+    () => exportSitemap()
+  );
+  fse.outputFileSync(`${ TARGET_DIR }/sitemap.xml`, sitemap);
+  filesAdded += 1;
+  console.log('[staticExport] Created sitemap.xml');
+
   [
     '_export_objs.html',
+    '_export_sitemap.html',
     'export_objs.js',
+    'export_sitemap.js',
   ].forEach(filename => {
     console.log(`[staticExport] ✨ Removing now obsolete file ${ filename }...`);
     fse.removeSync(`${TARGET_DIR}/${ filename }`);
