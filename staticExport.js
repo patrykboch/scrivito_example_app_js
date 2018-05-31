@@ -74,7 +74,7 @@ function writeObjsToDisk(results) {
     const { objId, objUrl, bodyContent } = result;
     const fileName = filenameFromUrl(objUrl);
     console.log(`  [writeObjsToDisk] Writing ${ fileName } (${ objId }) to disk...`);
-    const htmlContent = generateHtml(bodyContent);
+    const htmlContent = generateHtml({ objId, bodyContent });
     fse.outputFileSync(`${ TARGET_DIR }/${ fileName }`, htmlContent);
   });
 }
@@ -89,7 +89,7 @@ function filenameFromUrl(url) {
   return `${ pathname }.html`;
 }
 
-function generateHtml(bodyContent) {
+function generateHtml({ objId, bodyContent }) {
   // TODO: Remove workaround for host containing urls from scrivito.
   const body = bodyContent.replace(/http:\/\/localhost\:8080/g, '');
 
@@ -105,7 +105,7 @@ function generateHtml(bodyContent) {
   <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-  <div id="application" data-scrivito-prerendered="true">
+  <div id="application" data-scrivito-prerendering-obj-id="${objId}">
     ${ body }
   </div>
   <script async src="/index.js"></script>
