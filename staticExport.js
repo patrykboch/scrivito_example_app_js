@@ -36,6 +36,7 @@ async function exportObjs() {
 
   console.log('  [exportObjs] 🖥️️  Visiting http://localhost:8080/_export_objs.html ...');
   const page = await browser.newPage();
+  page.on('console', msg => console.log('  [exportObjs]   🖥️️  [console]', msg.text()));
   try {
     await page.goto('http://localhost:8080/_export_objs.html');
   } catch (e) {

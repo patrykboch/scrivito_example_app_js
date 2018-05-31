@@ -33,21 +33,21 @@ function exportObj(obj) {
 
 function exportObjs() {
   console.time('[exportObjs]');
-  console.time('[exportObjs] Load all objs');
+  console.time('Loading all objs');
   return Scrivito.load(allObjs).then(objs => {
-    console.timeEnd('[exportObjs] Load all objs');
+    console.timeEnd('Loading all objs');
 
-    console.time(`[exportObjs] Export ${objs.length} objs`);
+    console.time(`Exporting ${objs.length} objs`);
     const promises = objs.map(obj => {
-      console.time(`[exportObjs] Export obj ${obj.id()}`);
+      console.time(`Exporting obj ${obj.id()}`);
       return exportObj(obj).then(result => {
-        console.timeEnd(`[exportObjs] Export obj ${obj.id()}`);
+        console.timeEnd(`Exporting obj ${obj.id()}`);
         return result;
       });
     });
 
     return Promise.all(promises).then(results => {
-      console.timeEnd(`[exportObjs] Export ${objs.length} objs`);
+      console.timeEnd(`Exporting ${objs.length} objs`);
       console.timeEnd('[exportObjs]');
       return results;
     });
