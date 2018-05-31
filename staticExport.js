@@ -6,12 +6,26 @@ const path = require('path');
 const puppeteer = require('puppeteer');
 
 const TARGET_DIR = 'build';
+let server;
+let browser;
 
 async function staticExport() {
   console.time('[staticExport]');
   console.log('[staticExport] Starting...');
 
-  const exportedObjs = await exportObjs();
+  console.log('[staticExport] 🗄️  Starting express server...');
+  server = await startServer();
+  console.log('[staticExport] 🗄️  Express server started...');
+
+  console.log('[staticExport] 🖥️️  Starting browser...');
+  browser = await puppeteer.launch();
+  console.log('[staticExport] 🖥️️  Browser started');
+
+  const exportedObjs = await executeInBrowser(
+    'http://localhost:8080/_export_objs.html',
+    () => exportObjs()
+  );
+  console.log(`[staticExport] 🖥️️  Received ${ exportedObjs.length } objs.`);
 
   console.log(`[staticExport] Writing ${ exportedObjs.length } html files to disk...`);
   writeObjsToDisk(exportedObjs);
@@ -20,42 +34,35 @@ async function staticExport() {
   await fse.remove(`${TARGET_DIR}/_export_objs.html`);
   await fse.remove(`${TARGET_DIR}/export_objs.js`);
 
+  console.log('[staticExport] 🖥️️  Closing the browser...');
+  await browser.close();
+
+  console.log('[staticExport] 🗄️  Closing express server...');
+  await server.close();
+
   console.log(
     `[staticExport] 📦 Enriched folder ${ TARGET_DIR } with ${ exportedObjs.length } files!`);
 
   console.timeEnd('[staticExport]');
 }
 
-async function exportObjs() {
-  console.log('  [exportObjs] 🗄️  Starting express server...');
-  const server = await startServer();
-  console.log('  [exportObjs] 🗄️  Express server started...');
-
-  console.log('  [exportObjs] 🖥️️  Starting browser...');
-  const browser = await puppeteer.launch();
-
-  console.log('  [exportObjs] 🖥️️  Visiting http://localhost:8080/_export_objs.html ...');
+async function executeInBrowser(url, jsCommand) {
+  console.log(`  [executeInBrowser] 🖥️️  Visiting ${ url } ...`);
   const page = await browser.newPage();
-  page.on('console', msg => console.log('  [exportObjs]   🖥️️  [console]', msg.text()));
+  page.on('console', msg => console.log('  [executeInBrowser]   🖥️️  [console]', msg.text()));
   try {
-    await page.goto('http://localhost:8080/_export_objs.html');
+    await page.goto(url);
   } catch (e) {
-    console.log('  [exportObjs] 🖥️️  ❌  Could not visit http://localhost:8080/_export_objs.html!' +
+    console.log(`  [executeInBrowser] 🖥️️  ❌  Could not visit ${ url } !` +
       ' Is a webserver running on 8080?');
     throw e;
   }
 
-  console.log('  [exportObjs] 🖥️️  Generating results...');
-  const results = await page.evaluate(() => exportObjs());
-  console.log(`  [exportObjs] 🖥️️  Generated ${ results.length } results.`);
+  console.log('  [executeInBrowser] 🖥️️  Executing javascript command...');
+  const result = await page.evaluate(jsCommand);
+  console.log(`  [executeInBrowser] 🖥️️  Executed javascript command.`);
 
-  console.log('  [exportObjs] 🖥️️  Closing the browser...');
-  await browser.close();
-
-  console.log('  [exportObjs] 🗄️  Closing express server...');
-  await server.close();
-
-  return results;
+  return result;
 }
 
 function startServer() {
