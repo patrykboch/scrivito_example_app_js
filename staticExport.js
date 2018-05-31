@@ -102,6 +102,8 @@ function generateHtml({ objId, bodyContent }) {
   <meta name="generator" content="Scrivito by Infopark AG (scrivito.com)">
 
   <title>Welcome to the Scrivito Example App!</title>
+  <link rel="preconnect" href="https://api.scrivito.com" crossorigin>
+  <link rel="preconnect" href="https://api.scrivito.com">
   <link rel="stylesheet" href="/index.css">
 </head>
 <body>
