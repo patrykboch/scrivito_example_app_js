@@ -134,7 +134,6 @@ function generateHtml({ objId, htmlAttributes, headContent, bodyAttributes, body
   <div id="application" data-scrivito-prerendering-obj-id="${objId}">
     ${ bodyContent }
   </div>
-  <script async src="/index.js"></script>
 </body>
 </html>`;
 
