@@ -31,7 +31,7 @@ if (prerenderedObjId) {
       () => {
         preloadHomepage();
         preloadPermalink();
-        return Scrivito.withPage(
+        return Scrivito.renderPage(
           obj,
           () => ReactDOMServer.renderToStaticMarkup(<App />)
         );

@@ -24,23 +24,27 @@ function exportObj(obj) {
   // See https://github.com/nfl/react-helmet/issues/310 for details
   Helmet.canUseDOM = false;
 
-  return Scrivito.load(() =>
-    Scrivito.withPage(obj, () => {
-      const bodyContent = ReactDOMServer.renderToStaticMarkup(<App />);
-      const helmet = Helmet.renderStatic();
-      return {
-        objId: obj.id(),
-        objUrl: Scrivito.urlFor(obj),
-        htmlAttributes: helmet.htmlAttributes.toString(),
-        headContent: `
+  return Scrivito.renderPage(obj, () => {
+    const bodyContent = ReactDOMServer.renderToStaticMarkup(<App />);
+    const helmet = Helmet.renderStatic();
+    return {
+      objId: obj.id(),
+      objUrl: Scrivito.urlFor(obj),
+      htmlAttributes: helmet.htmlAttributes.toString(),
+      headContent: `
           ${helmet.title.toString()}
           ${helmet.meta.toString()}
           ${helmet.link.toString()}
         `,
-        bodyAttributes: helmet.bodyAttributes.toString(),
-        bodyContent,
-      };
-    })
+      bodyAttributes: helmet.bodyAttributes.toString(),
+      bodyContent,
+    };
+  }).then(
+    ({ result, preloadToken }) => {
+      result.preloadToken = preloadToken;
+
+      return result;
+    }
   ).catch(e => {
     const objId = obj.id();
     console.log(`❌  Error while processing obj ${objId}`, e);
