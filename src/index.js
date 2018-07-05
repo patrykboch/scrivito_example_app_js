@@ -9,4 +9,7 @@ import './config';
 
 window.prerenderReady = false;
 ReactDOM.render(<App />, document.getElementById('application'));
+Scrivito.finishLoading().then(() => {
+  console.log('loading finished');
+});
 Scrivito.finishLoading().then(() => { window.prerenderReady = true; });
