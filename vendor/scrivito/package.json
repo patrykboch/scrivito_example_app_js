@@ -1,11 +1,10 @@
 {
   "name": "scrivito",
   "license": "LGPL-3.0",
-  "version": "1.2.0-rc1-506-gd811fefd0d",
+  "version": "1.2.0-rc1-652-gbbcbe3bf61",
   "dependencies": {
     "history": "^4.7.2",
     "promise-polyfill": "^7.1.2",
-    "prop-types": "^15.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "speakingurl": "^14.0.1",
