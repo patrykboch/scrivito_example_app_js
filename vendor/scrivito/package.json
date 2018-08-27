@@ -1,13 +1,14 @@
 {
   "name": "scrivito",
   "license": "LGPL-3.0",
-  "version": "1.2.0-rc1-772-g999a8f726a",
+  "version": "1.3.0-rc1-170-gbe3ee1ef67",
   "dependencies": {
     "history": "^4.7.2",
     "promise-polyfill": "^7.1.2",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "speakingurl": "^14.0.1",
+    "tcomb-react": "^0.9.3",
     "tcomb-validation": "^3.4.1",
     "underscore": "^1.8.3",
     "urijs": "^1.19.1"
