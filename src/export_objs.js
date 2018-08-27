@@ -40,8 +40,8 @@ function exportObj(obj) {
       bodyContent,
     };
   }).then(
-    ({ result, preloadToken }) => {
-      result.preloadToken = preloadToken;
+    ({ result, contentDump }) => {
+      result.preloadDump = contentDump;
 
       return result;
     }
