@@ -117,7 +117,9 @@ function filenameFromUrl(url) {
   return `${ pathname }.html`;
 }
 
-function generateHtml({ objId, htmlAttributes, headContent, bodyAttributes, bodyContent }) {
+function generateHtml({
+  objId, htmlAttributes, headContent, bodyAttributes, bodyContent, preloadDump,
+}) {
   const html = `<!DOCTYPE html>
 <html ${ htmlAttributes }>
 <head>
@@ -135,6 +137,11 @@ function generateHtml({ objId, htmlAttributes, headContent, bodyAttributes, body
     ${ bodyContent }
   </div>
   <script async src="/index.js"></script>
+  <div
+    id="preloadDump"
+    class="invisible"
+    data-scrivito-preload-dump="${encodeURIComponent(preloadDump)}"
+  />
 </body>
 </html>`;
 
