@@ -7,13 +7,12 @@ import './Widgets';
 import App from './App';
 import './config';
 
-let preloadDump = '';
-const preloadDumpElement = document.getElementById('preloadDump');
-if (preloadDumpElement) {
-  const preloadDumpData = preloadDumpElement.getAttribute('data-scrivito-preload-dump');
-  preloadDump = decodeURIComponent(preloadDumpData);
+function renderApplication() {
+  ReactDOM.render(<App />, document.getElementById('application'));
 }
 
-Scrivito.preload(preloadDump).then(() => {
-  ReactDOM.render(<App />, document.getElementById('application'));
-});
+if (window.preloadDump) {
+  Scrivito.preload(window.preloadDump).then(renderApplication);
+} else {
+  renderApplication();
+}

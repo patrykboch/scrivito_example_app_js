@@ -99,11 +99,17 @@ function startServer() {
 
 function writeObjsToDisk(results) {
   results.forEach(result => {
-    const { objId, objUrl } = result;
+    const { objId, objUrl, preloadDump } = result;
     const fileName = filenameFromUrl(objUrl);
+    const preloadDumpFileName = `preloadDump-${ objId }.js`;
+
     console.log(`  [writeObjsToDisk] Writing ${ fileName } (${ objId }) to disk...`);
-    const htmlContent = generateHtml(result);
+    const htmlContent = generateHtml({ preloadDumpFileName, ...result });
     fse.outputFileSync(`${ TARGET_DIR }/${ fileName }`, htmlContent);
+
+    console.log(`  [writeObjsToDisk] Writing ${ preloadDumpFileName } to disk...`);
+    const preloadDumpContent = generatePreloadDump(preloadDump);
+    fse.outputFileSync(`${ TARGET_DIR }/${ preloadDumpFileName }`, preloadDumpContent);
   });
 }
 
@@ -118,7 +124,7 @@ function filenameFromUrl(url) {
 }
 
 function generateHtml({
-  objId, htmlAttributes, headContent, bodyAttributes, bodyContent, preloadDump,
+  objId, htmlAttributes, headContent, bodyAttributes, bodyContent, preloadDumpFileName,
 }) {
   const html = `<!DOCTYPE html>
 <html ${ htmlAttributes }>
@@ -136,17 +142,20 @@ function generateHtml({
   <div id="application" data-scrivito-prerendering-obj-id="${objId}">
     ${ bodyContent }
   </div>
+  <script src="/${ preloadDumpFileName }"></script>
   <script async src="/index.js"></script>
-  <div
-    id="preloadDump"
-    class="invisible"
-    data-scrivito-preload-dump="${encodeURIComponent(preloadDump)}"
-  />
 </body>
 </html>`;
 
   // TODO: Remove workaround for host containing urls from scrivito.
   return html.replace(/http:\/\/localhost\:8080/g, '');
+}
+
+function generatePreloadDump(preloadDump) {
+  return `
+    var escapedPreloadDump = "${encodeURIComponent(preloadDump)}";
+    window.preloadDump = decodeURIComponent(escapedPreloadDump);
+  `;
 }
 
 staticExport().catch(e => {
