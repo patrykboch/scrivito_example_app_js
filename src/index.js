@@ -7,12 +7,24 @@ import './Widgets';
 import App from './App';
 import './config';
 
-function renderApplication() {
-  ReactDOM.render(<App />, document.getElementById('application'));
+const appElement = document.getElementById('application');
+
+function renderApp() {
+  ReactDOM.render(<App />, appElement);
 }
 
-if (window.preloadDump) {
-  Scrivito.preload(window.preloadDump).then(renderApplication);
+function preloadAndRenderApp(preloadDump) {
+  Scrivito.preload(preloadDump).then(renderApp);
+}
+
+if (appElement.getAttribute('data-scrivito-prerendering-obj-id')) {
+  // html is prerendered
+  if (window.preloadDump) {
+    preloadAndRenderApp(window.preloadDump);
+  } else {
+    // register global callback, so that the preloadDump can execute it once loaded.
+    window.preloadAndRenderApp = preloadAndRenderApp;
+  }
 } else {
-  renderApplication();
+  renderApp();
 }

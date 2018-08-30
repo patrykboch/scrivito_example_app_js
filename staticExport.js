@@ -142,7 +142,7 @@ function generateHtml({
   <div id="application" data-scrivito-prerendering-obj-id="${objId}">
     ${ bodyContent }
   </div>
-  <script src="/${ preloadDumpFileName }"></script>
+  <script async src="/${ preloadDumpFileName }"></script>
   <script async src="/index.js"></script>
 </body>
 </html>`;
@@ -154,7 +154,13 @@ function generateHtml({
 function generatePreloadDump(preloadDump) {
   return `
     var escapedPreloadDump = "${encodeURIComponent(preloadDump)}";
-    window.preloadDump = decodeURIComponent(escapedPreloadDump);
+    var preloadDump = decodeURIComponent(escapedPreloadDump);
+
+    if (window.preloadAndRenderApp) {
+      preloadAndRenderApp(preloadDump);
+    } else {
+      window.preloadDump = preloadDump;
+    }
   `;
 }
 
