@@ -9,14 +9,15 @@ import './config';
 
 function preloadHomepage() {
   // TODO Load "homepage" callback of "Scrivito.configure", if configured
-  return Scrivito.Obj.root();
+  Scrivito.Obj.root();
 }
 
 function preloadPermalink() {
   // TODO remove "routingBasePath" of "Scrivito.configure" from path, if configured
   const pathToRecognize = window.location.pathname;
   const path = pathToRecognize.replace(new RegExp('^/+|/+$', 'g'), '');
-  return Scrivito.Obj.getByPermalink(path);
+  if (!path) { return; }
+  Scrivito.Obj.getByPermalink(path);
 }
 
 const appElement = document.getElementById('application');
@@ -27,18 +28,15 @@ function renderApp() {
 }
 
 if (prerenderedObjId && window.preloadDump) {
-  Scrivito.load(
-    () => Scrivito.Obj.get(prerenderedObjId)
-  ).then(
-    () => Scrivito.load(
-      () => {
-        preloadHomepage();
-        preloadPermalink();
-      }
-    )
-  ).then(
-    () => Scrivito.preload(window.preloadDump).then(renderApp)
-  );
+  Scrivito.preload(window.preloadDump)
+    .then(
+      () => Scrivito.load(
+        () => {
+          preloadHomepage();
+          preloadPermalink();
+        }
+      )
+    ).then(renderApp);
 } else {
   window.prerenderReady = false;
   renderApp();
