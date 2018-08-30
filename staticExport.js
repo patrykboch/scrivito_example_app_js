@@ -152,16 +152,12 @@ function generateHtml({
 }
 
 function generatePreloadDump(preloadDump) {
-  return `
-    var escapedPreloadDump = "${encodeURIComponent(preloadDump)}";
-    var preloadDump = decodeURIComponent(escapedPreloadDump);
-
-    if (window.preloadAndRenderApp) {
-      preloadAndRenderApp(preloadDump);
-    } else {
-      window.preloadDump = preloadDump;
-    }
-  `;
+  return `var preloadDump = ${JSON.stringify(preloadDump)};
+if (window.preloadAndRenderApp) {
+  preloadAndRenderApp(preloadDump);
+} else {
+  window.preloadDump = preloadDump;
+}`;
 }
 
 staticExport().catch(e => {
